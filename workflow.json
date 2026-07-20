@@ -1,0 +1,307 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Workflow",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "87f71886-4561-4e83-b1e8-6193ee6f78b9",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=System: \"You are a social media strategist with expertise in content adaptation\"\nUser: \"Analyze this article and create a summary that:\n1. Captures the 3 most important insights\n2. Includes any actionable advice or tips\n3. Maintains the original tone and perspective\n4. Highlights implications for the target audience\n5. Stays under 200 words for social media adaptation\nArticle: {{ $json.newslinks }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "9c6b2533-9442-471c-98c3-adc74f1ee222",
+      "name": "Summarize article"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        176
+      ],
+      "id": "af6dfc74-d3ea-4e56-979b-1d0858ad8d1c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        -192
+      ],
+      "id": "178a78f0-2dca-4d8b-b081-c432a08eed3c",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -320
+      ],
+      "id": "64b35d1f-5433-458a-a488-23706ca32f90",
+      "name": "Create a post"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        112
+      ],
+      "id": "b9af677e-4a26-4ca0-bb7e-f2957e372828",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        416
+      ],
+      "id": "e38af4ad-ae28-40eb-bc21-540b03041262",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Assume the role of an industry expert and draft a LinkedIn post discussing key\npoints from a news article relevant to artificial intelligence. The post should provide\ninsightful analysis, connect with current industry trends, and encourage\nprofessional engagement or discussion. Highlight any notable implications for the\nindustry. Since LinkedIn supports detailed posts, ensure it is informative and\nstructured. Include a professional call to action. Here's a summary of the article:\n {{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        656,
+        -320
+      ],
+      "id": "eebc62ba-be26-47ae-935c-2642354f60f0",
+      "name": "Trigger for linkedin"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Draft an X post as an Al industry expert analyzing a key news article. The post should:\nDeliver sharp insights on the article's main points\nConnect to current Al trends\nSpark discussion with a thought-provoking question\nBe punchy and engaging\nEnd with a clear call to action\nLength: Within 30 words\nFocus: What matters most to the Al community. Make every word count.\nArticle summary: {{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        656,
+        -16
+      ],
+      "id": "fff0c4a9-6f5b-42c1-8a13-adbf3d6da59d",
+      "name": "Trigger for X"
+    },
+    {
+      "parameters": {
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        288
+      ],
+      "id": "8f916a58-6839-4de9-924c-ca0913c2ba5c",
+      "name": "Trigger for Instagram"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Summarize article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize article",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize article": {
+      "main": [
+        [
+          {
+            "node": "Trigger for linkedin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger for X",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger for Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Trigger for linkedin",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Trigger for X",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Trigger for Instagram",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger for linkedin": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger for X": {
+      "main": [
+        []
+      ]
+    },
+    "Trigger for Instagram": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1973a9ec-f56b-4c18-bf5e-886832024736",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1b0106f856bb2dc3d7b7bbf2a1a3a49ae9c389fceb3005496e4772ee32f45764"
+  },
+  "nodeGroups": [],
+  "id": "nrYQ857F55zdL1Yu",
+  "tags": []
+}
