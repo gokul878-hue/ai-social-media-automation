@@ -1,61 +1,100 @@
 # AI-Powered Social Media Content Automation
 
-An event-driven automation pipeline built in [n8n](https://n8n.io) that turns a new article link into platform-tailored social media posts — automatically.
+An event-driven **n8n + Google Gemini** workflow that turns an article link into platform-specific social media content for LinkedIn, X, and Instagram.
 
-## What it does
+## Overview
 
-1. **Trigger:** A new row added to a Google Sheet (containing an article link) triggers the workflow.
-2. **Summarize:** Google Gemini reads the article and produces a structured summary — key insights, actionable tips, tone, and audience implications.
-3. **Branch & Adapt:** The summary is passed in parallel to three separate Gemini-powered chains, each with a platform-specific prompt:
-   - **LinkedIn:** Professional, analysis-driven post with a call to action.
-   - **X (Twitter):** Punchy, under-30-word post with a discussion hook.
-   - **Instagram:** Adapted for visual/caption-style content.
-4. **Publish:** Finished posts are sent to each platform's API for publishing.
+The workflow starts when a new article link is added to Google Sheets. Google Gemini summarizes the article, then separate AI chains adapt that summary for different social platforms.
+
+### Current implementation
+
+- Google Sheets trigger for incoming article links
+- Gemini-powered article summarization
+- Separate content-generation chains for:
+  - LinkedIn
+  - X (Twitter)
+  - Instagram
+- Automated publishing node currently connected for **LinkedIn**
+- X and Instagram content is generated, but direct publishing nodes are not yet connected in the current workflow
 
 ## Architecture
 
+```text
+Google Sheets
+     |
+     v
+Gemini Article Summary
+     |
+     +----------------+----------------+
+     |                |                |
+     v                v                v
+ LinkedIn             X           Instagram
+ Generator        Generator        Generator
+     |
+     v
+LinkedIn Publish
 ```
-Google Sheets Trigger
-        │
-        ▼
-  Summarize Article (Gemini)
-        │
-   ┌────┼────┐
-   ▼    ▼    ▼
-LinkedIn  X  Instagram
- Prompt Prompt Prompt
- (Gemini)(Gemini)(Gemini)
-   │    │    │
-   ▼    ▼    ▼
- Post  Post  Post
+
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| Workflow automation | n8n |
+| LLM | Google Gemini |
+| Trigger source | Google Sheets |
+| Social publishing | LinkedIn node/API |
+| Workflow format | JSON |
+
+## Why use separate AI chains?
+
+Each social platform has different expectations for tone, structure, length, and audience. Dedicated prompts make the generated content more platform-appropriate than reusing one generic post everywhere.
+
+## Repository Structure
+
+```text
+ai-social-media-automation/
+├── README.md
+├── screenshot.png
+└── workflow.json
 ```
-
-## Tools & APIs used
-
-- **n8n** — workflow orchestration
-- **Google Sheets API** — trigger source
-- **Google Gemini API** — content summarization and platform-specific generation
-- **LinkedIn API** — automated post creation
-- **X (Twitter) API** — automated post creation
-- **Instagram API** — automated post creation
-
-## Why separate LLM nodes per platform?
-
-Each platform has distinct tone, length, and audience expectations (e.g. X posts are capped at ~30 words and hook-driven, while LinkedIn favors longer, analytical posts). Using a dedicated Gemini chain per platform, each with its own tailored prompt, produces higher-quality, platform-native content compared to a single generic post reused everywhere.
 
 ## Setup
 
-1. Import `workflow.json` into your n8n instance.
-2. Connect your own credentials for:
-   - Google Sheets (OAuth2)
-   - Google Gemini API
-   - LinkedIn, X, and Instagram (OAuth2 / API keys)
-3. Replace the placeholder Google Sheet ID with your own sheet's ID.
-4. Activate the workflow.
+1. Install or open an n8n instance.
+2. Import `workflow.json`.
+3. Connect your own Google Sheets and Google Gemini credentials.
+4. Replace the placeholder Google Sheet ID with your sheet ID.
+5. Configure LinkedIn credentials if you want automatic LinkedIn publishing.
+6. Add and configure X/Instagram publishing nodes if you want direct publishing to those platforms.
+7. Activate the workflow.
 
-## Screenshot
+> Credentials and secrets are intentionally not stored in this repository.
 
-![Workflow canvas](screenshot.png)
+## Workflow Logic
+
+1. A new Google Sheets row provides an article link.
+2. Gemini generates a concise article summary with key insights and audience implications.
+3. The summary branches into three separate prompt chains.
+4. Each chain generates content adapted to its target platform.
+5. LinkedIn content is passed to the configured LinkedIn publishing node.
+
+## Future Improvements
+
+- Add direct X publishing
+- Add direct Instagram publishing
+- Add approval-before-publish mode
+- Store generated posts back in Google Sheets
+- Add error handling and retry logic
+- Add scheduling and analytics
+
+## Skills Demonstrated
+
+- Event-driven workflow design
+- LLM prompt engineering
+- API-based automation
+- Multi-platform content adaptation
+- n8n workflow orchestration
 
 ---
-*Built as a personal project to explore event-driven automation, LLM-based content adaptation, and multi-platform API integration.*
+
+Built as a personal project to explore AI automation, LLM-based content transformation, and social-media workflow orchestration.
