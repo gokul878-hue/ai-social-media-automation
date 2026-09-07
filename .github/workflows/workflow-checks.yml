@@ -1,0 +1,28 @@
+name: Workflow Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate workflow JSON
+        run: python -m json.tool workflow.json > /dev/null
+
+      - name: Confirm public template uses placeholders
+        shell: bash
+        run: |
+          grep -q 'YOUR_SHEET_ID' workflow.json
+          grep -q 'YOUR_CREDENTIAL_ID' workflow.json
+          grep -q 'YOUR_CREDENTIAL_NAME' workflow.json
